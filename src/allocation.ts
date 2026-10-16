@@ -7,10 +7,27 @@ const readout = document.querySelector<HTMLParagraphElement>(
 )!;
 let num_people = 2;
 
-function updateAllocation() {
+type AllocationState = {
+  num_people: number;
+  production_amount: number;
+  resource_demand: number;
+  resource_deficit: number;
+};
+
+function getAllocationState(): AllocationState {
   const production_amount = num_people * 3;
   const resource_demand = 6;
   const resource_deficit = production_amount - resource_demand;
+  return {
+    num_people,
+    production_amount,
+    resource_demand,
+    resource_deficit,
+  };
+}
+function updateAllocation() {
+  const { num_people, production_amount, resource_demand, resource_deficit } =
+    getAllocationState();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   for (let i = 0; i < 6; i++) {
     ctx.fillStyle = i < num_people ? "#27766b" : "#c9d2c9";
