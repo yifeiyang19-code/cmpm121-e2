@@ -20,6 +20,10 @@ type ShieldSnapshot = {
 };
 
 const capacity = 10;
+const shieldEvents: EventTarget = new EventTarget();
+const onShieldChange: EventListener = () => {
+  drawMeter(getShieldSnapshot());
+};
 
 function drawMeter(snapshot: ShieldSnapshot) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -51,7 +55,7 @@ function setCount(next: number) {
   if (bounded === count) return;
   count = bounded;
   const snapshot = getShieldSnapshot();
-  drawMeter(snapshot);
+  shieldEvents.dispatchEvent(new Event("shieldChange"));
   if (panel) updateStats(snapshot);
 }
 
@@ -62,6 +66,8 @@ function getShieldSnapshot(): ShieldSnapshot {
     missingCharge: capacity - count,
   };
 }
+
+shieldEvents.addEventListener("shieldChange", onShieldChange);
 
 document.querySelector<HTMLButtonElement>("#counter-less")!.onclick = () => {
   setCount(count - 1);
