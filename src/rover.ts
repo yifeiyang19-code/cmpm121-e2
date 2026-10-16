@@ -74,6 +74,10 @@ function renderQueue(): void {
       return li;
     }),
   );
+  document.querySelector<HTMLParagraphElement>("#rover-queue-status")!
+    .textContent = pendingCommands.length === 0
+      ? "Empty"
+      : `Pending commands: ${pendingCommands.length}`;
 }
 
 document.querySelector<HTMLButtonElement>("#rover-forward")!.onclick = () => {
@@ -99,7 +103,8 @@ const runButton = document.querySelector<HTMLButtonElement>("#rover-run")!;
 const clearButton = document.querySelector<HTMLButtonElement>("#rover-clear")!;
 runButton.disabled = false;
 clearButton.disabled = false;
-
+document.querySelector<HTMLParagraphElement>("#rover-queue-status")!
+  .textContent = "Empty";
 document.querySelector<HTMLButtonElement>("#rover-clear")!.onclick = () => {
   pendingCommands.length = 0;
   renderQueue();
