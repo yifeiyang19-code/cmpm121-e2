@@ -66,16 +66,51 @@ function drawRover() {
   }`;
 }
 
+function renderQueue(): void {
+  pendingList.replaceChildren(
+    ...pendingCommands.map((command) => {
+      const li = document.createElement("li");
+      li.textContent = `${command.label}`;
+      return li;
+    }),
+  );
+}
+
 document.querySelector<HTMLButtonElement>("#rover-forward")!.onclick = () => {
-  forwardCommand.execute();
+  pendingCommands.push(forwardCommand);
+  renderQueue();
 };
 document.querySelector<HTMLButtonElement>("#rover-right")!.onclick = () => {
-  rightCommand.execute();
+  pendingCommands.push(rightCommand);
+  renderQueue();
 };
 document.querySelector<HTMLButtonElement>("#rover-reset")!.onclick = () => {
   x = 2;
   y = 2;
   direction = 0;
+  pendingCommands.length = 0;
+  renderQueue();
   drawRover();
 };
+
+const pendingCommands: Command[] = [];
+const pendingList = document.querySelector<HTMLOListElement>("#rover-pending")!;
+const runButton = document.querySelector<HTMLButtonElement>("#rover-run")!;
+const clearButton = document.querySelector<HTMLButtonElement>("#rover-clear")!;
+runButton.disabled = false;
+clearButton.disabled = false;
+
+document.querySelector<HTMLButtonElement>("#rover-clear")!.onclick = () => {
+  pendingCommands.length = 0;
+  renderQueue();
+};
+document.querySelector<HTMLButtonElement>("#rover-run")!.onclick = () => {
+  for (const command of pendingCommands) {
+    command.execute();
+  }
+  pendingCommands.length = 0;
+  renderQueue();
+};
+
 drawRover();
+renderQueue();
