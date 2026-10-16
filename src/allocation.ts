@@ -14,6 +14,12 @@ type AllocationState = {
   resource_deficit: number;
 };
 
+type ReportLabel = {
+  label: string;
+  value: number;
+  color: string;
+};
+
 function getAllocationState(): AllocationState {
   const production_amount = num_people * 3;
   const resource_demand = 6;
@@ -25,6 +31,7 @@ function getAllocationState(): AllocationState {
     resource_deficit,
   };
 }
+
 function updateAllocation() {
   const { num_people, production_amount, resource_demand, resource_deficit } =
     getAllocationState();
@@ -39,13 +46,18 @@ function updateAllocation() {
   ctx.fillStyle = "#233e43";
   ctx.font = "14px system-ui";
   ctx.fillText(`Producers: ${num_people} / 6`, 18, 76);
-  ctx.fillText(`Production: ${production_amount}`, 18, 102);
-  ctx.fillStyle = "#27766b";
-  ctx.fillRect(18, 110, production_amount * 14, 20);
-  ctx.fillStyle = "#233e43";
-  ctx.fillText(`Consumption: ${resource_demand}`, 18, 154);
-  ctx.fillStyle = "#a44d23";
-  ctx.fillRect(18, 162, resource_demand * 14, 20);
+  const reportLabels: ReportLabel[] = [
+    { label: "Production", value: production_amount, color: "#27766b" },
+    { label: "Consumption", value: resource_demand, color: "#a44d23" },
+  ];
+  for (let i = 0; i < reportLabels.length; i++) {
+    const { label, value, color } = reportLabels[i];
+    ctx.fillStyle = color;
+    ctx.fillRect(18, 110 + i * 52, value * 14, 20);
+    ctx.fillStyle = "#233e43";
+    ctx.fillText(`${label}: ${value}`, 18, 102 + i * 52);
+  }
+
   readout.textContent = textContent(
     num_people,
     production_amount,
